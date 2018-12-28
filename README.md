@@ -9,16 +9,16 @@ Updates of patches to mutt to support Gmail features
 4. cd into the mutt folder
 5. apply the patch
 
-## Example (to be updated)
+## Example
 
 You can use the following commands to patch the latest version of mutt:
 
 ```
-% wget ftp://ftp.mutt.org/pub/mutt/mutt-1.6.0.tar.gz
-% wget https://raw.githubusercontent.com/kuperman/Mutt-Trash-Purge-patch/master/patch-1.6.0.bk.trash_folder-purge_message.1
-% tar xzvf mutt-1.6.0.tar.gz
-% cd mutt-1.6.0
-% patch -p1 < ../patch-1.6.0.bk.trash_folder-purge_message.1
+% wget ftp://ftp.mutt.org/pub/mutt/mutt-1.11.1.tar.gz
+% wget https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.11.1.bk.gmail-labels.1
+% tar xzvf mutt-1.11.1.tar.gz
+% cd mutt-1.11.1
+% patch -p1 < ../patch-1.11.1.bk.gmail-labels.1
 ```
 
 ## Working with Homebrew
