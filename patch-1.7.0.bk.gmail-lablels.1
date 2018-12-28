@@ -1,0 +1,82 @@
+diff -Naur mutt-1.7.0/PATCHES mutt-1.7.0-gmail-labels/PATCHES
+--- mutt-1.7.0/PATCHES	2016-08-10 21:47:00.000000000 -0400
++++ mutt-1.7.0-gmail-labels/PATCHES	2016-08-23 15:03:38.000000000 -0400
+@@ -0,0 +1 @@
++patch-1.7.0.bk.gmail-labels.1
+diff -Naur mutt-1.7.0/imap/message.c mutt-1.7.0-gmail-labels/imap/message.c
+--- mutt-1.7.0/imap/message.c	2016-08-10 21:47:00.000000000 -0400
++++ mutt-1.7.0-gmail-labels/imap/message.c	2016-08-23 15:03:38.000000000 -0400
+@@ -242,7 +242,7 @@
+       char *cmd;
+ 
+       fetchlast = msgend + 1;
+-      safe_asprintf (&cmd, "FETCH %d:%d (UID FLAGS INTERNALDATE RFC822.SIZE %s)",
++      safe_asprintf (&cmd, "FETCH %d:%d (UID FLAGS INTERNALDATE RFC822.SIZE X-GM-LABELS %s)",
+                      msgno + 1, fetchlast, hdrreq);
+       imap_cmd_start (idata, cmd);
+       FREE (&cmd);
+@@ -323,6 +323,7 @@
+         0, 0);
+       /* content built as a side-effect of mutt_read_rfc822_header */
+       ctx->hdrs[idx]->content->length = h.content_length;
++      ctx->hdrs[idx]->env->x_label = h.data->labels;
+       ctx->size += h.content_length;
+ 
+ #if USE_HCACHE
+@@ -1167,6 +1168,44 @@
+   {
+     SKIPWS (s);
+ 
++    if (ascii_strncasecmp ("X-GM-LABELS", s, 11) == 0)
++    {
++        s += 11;
++        SKIPWS (s);
++        ptmp = tmp;
++        s++; /* skip ( */
++        while (*s && *s != ')')
++        {
++            if (ptmp-tmp == sizeof(tmp)/sizeof(char))
++              s++;
++            else if (ascii_strncasecmp ("\"\\\\Important\"", s, 13) == 0)
++            {
++              s += 13;
++              SKIPWS (s);
++            }
++            else if (ascii_strncasecmp ("\"\\\\Starred\"", s, 11) == 0)
++            {
++              s += 11;
++              SKIPWS (s);
++            }
++            else if (ascii_strncasecmp ("\"\\\\", s, 3) == 0)
++              s += 3;
++            else if (ascii_strncasecmp ("\"", s, 1) == 0)
++              s++;
++            else
++              *ptmp++ = *s++;
++
++            if (*s == ')' && *(ptmp-1) == ' ')
++              ptmp--;
++        }
++        if (*s != ')')
++            return -1;
++        s++; /* skip ) */
++        *ptmp = 0;
++        h->data->labels = safe_strdup(tmp);
++        SKIPWS (s);
++    }
++
+     if (ascii_strncasecmp ("FLAGS", s, 5) == 0)
+     {
+       if ((s = msg_parse_flags (h, s)) == NULL)
+diff -Naur mutt-1.7.0/imap/message.h mutt-1.7.0-gmail-labels/imap/message.h
+--- mutt-1.7.0/imap/message.h	2016-08-10 21:47:00.000000000 -0400
++++ mutt-1.7.0-gmail-labels/imap/message.h	2016-08-23 15:03:38.000000000 -0400
+@@ -37,6 +37,8 @@
+   unsigned int parsed : 1;
+ 
+   unsigned int uid;	/* 32-bit Message UID */
++  char *labels;
++
+   LIST *keywords;
+ } IMAP_HEADER_DATA;
+ 

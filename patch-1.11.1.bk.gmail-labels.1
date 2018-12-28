@@ -1,0 +1,134 @@
+diff -Naur mutt-1.11.1/PATCHES mutt-1.11.1-gmail-labels/PATCHES
+--- mutt-1.11.1/PATCHES	2017-12-02 19:10:17.000000000 -0800
++++ mutt-1.11.1-gmail-labels/PATCHES	2018-12-27 11:00:55.000000000 -0800
+@@ -0,0 +1 @@
++patch-1.11.1.bk.gmail-labels.1
+diff -Naur mutt-1.11.1/imap/command.c mutt-1.11.1-gmail-labels/imap/command.c
+--- mutt-1.11.1/imap/command.c	2018-11-25 10:00:40.000000000 -0800
++++ mutt-1.11.1-gmail-labels/imap/command.c	2018-12-27 10:57:52.000000000 -0800
+@@ -73,6 +73,7 @@
+   "ENABLE",
+   "CONDSTORE",
+   "QRESYNC",
++  "X-GM-EXT-1",
+ 
+   NULL
+ };
+diff -Naur mutt-1.11.1/imap/imap_private.h mutt-1.11.1-gmail-labels/imap/imap_private.h
+--- mutt-1.11.1/imap/imap_private.h	2018-11-25 10:00:40.000000000 -0800
++++ mutt-1.11.1-gmail-labels/imap/imap_private.h	2018-12-27 10:58:55.000000000 -0800
+@@ -120,6 +120,7 @@
+   ENABLE,                       /* RFC 5161 */
+   CONDSTORE,                    /* RFC 7162 */
+   QRESYNC,                      /* RFC 7162 */
++  X_GM_EXT_1,                   /* Gmail IMAP Extensions */
+ 
+   CAPMAX
+ };
+diff -Naur mutt-1.11.1/imap/message.c mutt-1.11.1-gmail-labels/imap/message.c
+--- mutt-1.11.1/imap/message.c	2018-11-30 15:01:52.000000000 -0800
++++ mutt-1.11.1-gmail-labels/imap/message.c	2018-12-27 10:52:52.000000000 -0800
+@@ -736,8 +736,10 @@
+       mutt_buffer_add_printf (b, "%u:%u", msn_begin, msn_end);
+ 
+     fetch_msn_end = msn_end;
+-    safe_asprintf (&cmd, "FETCH %s (UID FLAGS INTERNALDATE RFC822.SIZE %s)",
+-                   b->data, hdrreq);
++    safe_asprintf (&cmd, "FETCH %s (%sUID FLAGS INTERNALDATE RFC822.SIZE X-GM-LABELS %s)",
++                   b->data, 
++                   mutt_bit_isset (idata->capabilities, X_GM_EXT_1) ? "X-GM-MSGID " : "",
++                   hdrreq);
+     imap_cmd_start (idata, cmd);
+     FREE (&cmd);
+     mutt_buffer_free (&b);
+@@ -821,6 +823,7 @@
+                                                        0, 0);
+         /* content built as a side-effect of mutt_read_rfc822_header */
+         ctx->hdrs[idx]->content->length = h.content_length;
++        ctx->hdrs[idx]->env->x_label = h.data->labels;
+         ctx->size += h.content_length;
+ 
+ #if USE_HCACHE
+@@ -936,6 +939,12 @@
+     }
+   }
+ 
++  if (mutt_bit_isset (idata->capabilities, X_GM_EXT_1))
++  {
++    fprintf (msg->fp, "X-Gm-Msgid:%llu\n", HEADER_DATA(h)->msgid);
++    fprintf (msg->fp, "X-Gm-Permalink: https://mail.google.com/mail/#all/%llx\n", HEADER_DATA(h)->msgid);
++  }
++
+   /* mark this header as currently inactive so the command handler won't
+    * also try to update it. HACK until all this code can be moved into the
+    * command handler */
+@@ -1702,11 +1711,57 @@
+   {
+     SKIPWS (s);
+ 
++    if (ascii_strncasecmp ("X-GM-LABELS", s, 11) == 0)
++    {
++        s += 11;
++        SKIPWS (s);
++        ptmp = tmp;
++        s++; /* skip ( */
++        while (*s && *s != ')')
++        {
++            if (ptmp-tmp == sizeof(tmp)/sizeof(char))
++              s++;
++            else if (ascii_strncasecmp ("\"\\\\Important\"", s, 13) == 0)
++            {
++              s += 13;
++              SKIPWS (s);
++            }
++            else if (ascii_strncasecmp ("\"\\\\Starred\"", s, 11) == 0)
++            {
++              s += 11;
++              SKIPWS (s);
++            }
++            else if (ascii_strncasecmp ("\"\\\\", s, 3) == 0)
++              s += 3;
++            else if (ascii_strncasecmp ("\"", s, 1) == 0)
++              s++;
++            else
++              *ptmp++ = *s++;
++
++            if (*s == ')' && *(ptmp-1) == ' ')
++              ptmp--;
++        }
++        if (*s != ')')
++            return -1;
++        s++; /* skip ) */
++        *ptmp = 0;
++        h->data->labels = safe_strdup(tmp);
++        SKIPWS (s);
++    }
++
+     if (ascii_strncasecmp ("FLAGS", s, 5) == 0)
+     {
+       if ((s = msg_parse_flags (h, s)) == NULL)
+         return -1;
+     }
++    else if (ascii_strncasecmp ("X-GM-MSGID", s, 10) == 0)
++    {
++      s += 10;
++      SKIPWS (s);
++      h->data->msgid = strtoull (s, NULL, 10);
++
++      s = imap_next_word (s);
++    }
+     else if (ascii_strncasecmp ("UID", s, 3) == 0)
+     {
+       s += 3;
+diff -Naur mutt-1.11.1/imap/message.h mutt-1.11.1-gmail-labels/imap/message.h
+--- mutt-1.11.1/imap/message.h	2018-11-25 10:00:40.000000000 -0800
++++ mutt-1.11.1-gmail-labels/imap/message.h	2018-12-27 10:52:52.000000000 -0800
+@@ -37,6 +37,8 @@
+ 
+   unsigned int uid;	/* 32-bit Message UID */
+   unsigned int msn;     /* Message Sequence Number */
++  unsigned long long msgid;
++  char *labels;
+   LIST *keywords;
+ } IMAP_HEADER_DATA;
+ 
