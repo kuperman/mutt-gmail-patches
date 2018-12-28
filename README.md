@@ -31,3 +31,6 @@ I need to update my tap of mutt to support this patch. However, for now you can 
 4. Build using `./configure` with all of the options listed in the output from above (e.g., `./configure '--disable-dependency-tracking' '--disable-warnings' '--prefix=/usr/local/Cellar/mutt/1.11.1_1' '--enable-debug' '--enable-hcache' '--enable-imap' '--enable-pop' '--enable-sidebar' '--enable-smtp' '--with-gss' '--with-sasl' '--with-ssl=/usr/local/opt/openssl' '--with-tokyocabinet' 'CC=clang')
 5. Run `make`
 6. Copy the binary into the usual location `cp -f ./mutt /usr/local/bin/mutt` (The '-f' is needed because the write bit is off in homebrew installations).
+
+### References
+The original version of these patches are from https://github.com/sgeb/homebrew-mutt/tree/master/patches
