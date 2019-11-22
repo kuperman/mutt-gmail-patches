@@ -1,6 +1,11 @@
 # mutt-gmail-patches
 Updates of patches to mutt to support Gmail features
 
+The current version of the patch will enable GMail IMAP extensions and the following features
+* `X-Gm-Msgid` message header
+* `X-Gm-Permalink` message header
+* The GMail labels via `%y` in index_format
+
 ## How to apply these patches
 
 1. Download the version of mutt you are interested in using from [mutt.org](http://www.mutt.org/)
@@ -27,6 +32,7 @@ I need to update my tap of mutt to support this patch. However, for now you can 
 
 1. Edit the recipie via `brew edit mutt`
 2. Add in the following lines
+```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.12.2.bk.gmail-labels.1"
     sha256 "2470d0101fe78c1c01d2b17c6f4c25375a7664f7b14d115f813f93647c9c06de"
