@@ -40,15 +40,15 @@ end
 ```
 3. Build from source `brew reinstall --build-from-source mutt`
 
-For previous version you can include the following:
-*mutt-1.12.2*
+For previous versions you can include the following:  
+**mutt-1.12.2**
 ```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.12.2.bk.gmail-labels.1"
     sha256 "2470d0101fe78c1c01d2b17c6f4c25375a7664f7b14d115f813f93647c9c06de"
 end
 ```
-*mutt-1.11.1*
+**mutt-1.11.1**
 ```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.11.1.bk.gmail-labels.1"
