@@ -19,11 +19,11 @@ The current version of the patch will enable GMail IMAP extensions and the follo
 You can use the following commands to patch the latest version of mutt:
 
 ```
-% wget ftp://ftp.mutt.org/pub/mutt/mutt-1.13.2.tar.gz
-% wget https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.13.2.bk.gmail-labels.1
-% tar xzvf mutt-1.13.2.tar.gz
-% cd mutt-1.13.2
-% patch -p1 < ../patch-1.13.2.bk.gmail-labels.1
+% wget ftp://ftp.mutt.org/pub/mutt/mutt-2.0.3.tar.gz
+% wget https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-labels.1
+% tar xzvf mutt-2.0.3.tar.gz
+% cd mutt-2.0.3
+% patch -p1 < ../patch-2.0.3.bk.gmail-labels.1
 ```
 
 ## Working with Homebrew
@@ -34,13 +34,20 @@ I need to update my tap of mutt to support this patch. However, for now you can 
 2. Add in the following lines
 ```
 patch do
-    url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.13.2.bk.gmail-labels.1"
-    sha256 "8e5504fe2a3e89ca45cafea8cc3d4fc7ee1415ff64aa6ebb6c9164797ac7ec9d"
+    url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-labels.1"
+    sha256 "0ab447c771a443a6645d9b95c5e1e41658e99e252a7d8a2c8496b4acbcf14c06"
 end
 ```
 3. Build from source `brew reinstall --build-from-source mutt`
 
 For previous versions you can include the following:  
+**mutt-1.13.2**
+```
+patch do
+    url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-1.13.2.bk.gmail-labels.1"
+    sha256 "8e5504fe2a3e89ca45cafea8cc3d4fc7ee1415ff64aa6ebb6c9164797ac7ec9d"
+end
+```
 **mutt-1.12.2**
 ```
 patch do
