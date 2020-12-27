@@ -6,6 +6,8 @@ The current version of the patch will enable GMail IMAP extensions and the follo
 * `X-Gm-Permalink` message header
 * The GMail labels via `%y` in index_format
 
+*Note:* You may need to clear/delete your header cache once you've applied the patch
+
 ## How to apply these patches
 
 1. Download the version of mutt you are interested in using from [mutt.org](http://www.mutt.org/)
