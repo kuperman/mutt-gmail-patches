@@ -76,3 +76,15 @@ end
 
 ### References
 The original version of these patches are from https://github.com/sgeb/homebrew-mutt/tree/master/patches
+
+## Gmail server side custom search patch
+
+Conflicts with Gmail label patch above
+
+
+```
+patch do
+    url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-customsearch.1"
+    sha256 "b7c71f8484caf04f52942e176de71df11607cdcbd6e403cee163ae2dc4b4df7e"
+end
+```
