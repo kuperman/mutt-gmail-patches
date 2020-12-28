@@ -65,15 +65,6 @@ patch do
 end
 ```
 
-<!--
-1. Install mutt via homebrew `brew install mutt`
-2. Get the config options via `mutt -v | grep Configure`
-3. Follow the steps above to get the patch applied
-4. Build using `./configure` with all of the options listed in the output from above (e.g., `./configure '--disable-dependency-tracking' '--disable-warnings' '--prefix=/usr/local/Cellar/mutt/1.12.2' '--enable-debug' '--enable-hcache' '--enable-imap' '--enable-pop' '--enable-sidebar' '--enable-smtp' '--with-gss' '--with-sasl' '--with-ssl=/usr/local/opt/openssl' '--with-tokyocabinet' 'CC=clang'` )
-5. Run `make`
-6. Copy the binary into the usual location `cp -f ./mutt /usr/local/bin/mutt` (The '-f' is needed because the write bit is off in homebrew installations).
--->
-
 ### References
 The original version of these patches are from https://github.com/sgeb/homebrew-mutt/tree/master/patches
 
@@ -86,5 +77,18 @@ Conflicts with Gmail label patch above
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-customsearch.1"
     sha256 "b7c71f8484caf04f52942e176de71df11607cdcbd6e403cee163ae2dc4b4df7e"
+end
+```
+
+Originally from [Phil Pennock](https://marc.info/?l=mutt-dev&m=131219876908901)
+via the [mutt-dev](http://www.mutt.org/mail-lists.html) mailing list and
+earlier ports of this in patch files.
+
+## Patch that combines search and labels
+
+```
+patch do
+    url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-extensions.1"
+    sha256 "28da21716eaeae4b158e19d55296de1900a34e101b6acf27525caa2543a39350"
 end
 ```
