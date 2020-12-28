@@ -37,7 +37,7 @@ I need to update my tap of mutt to support this patch. However, for now you can 
 ```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-labels.1"
-    sha256 "0ab447c771a443a6645d9b95c5e1e41658e99e252a7d8a2c8496b4acbcf14c06"
+    sha256 "83416ee11f0b532517b71f76a21da96f6ae2cc316b64465fee0db936f39d8c18"
 end
 ```
 3. Build from source `brew reinstall --build-from-source mutt`
@@ -76,7 +76,7 @@ Conflicts with Gmail label patch above
 ```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-customsearch.1"
-    sha256 "b7c71f8484caf04f52942e176de71df11607cdcbd6e403cee163ae2dc4b4df7e"
+    sha256 "4d9c0a64c975693fcb87bd13f48cb8ecac300e687079025be77f73c80f375ca5"
 end
 ```
 
@@ -89,6 +89,6 @@ earlier ports of this in patch files.
 ```
 patch do
     url "https://raw.githubusercontent.com/kuperman/mutt-gmail-patches/master/patch-2.0.3.bk.gmail-extensions.1"
-    sha256 "28da21716eaeae4b158e19d55296de1900a34e101b6acf27525caa2543a39350"
+    sha256 "086fa9039b0a74d61b50bdd64a450d1f6f080130e60d6b6ab97a7183480c350b"
 end
 ```

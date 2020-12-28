@@ -5,10 +5,10 @@ index e69de29b..da7f1db0 100644
 @@ -0,0 +1 @@
 +pp.gmailcustomsearch
 diff --git a/doc/manual.xml.head b/doc/manual.xml.head
-index 4a587eec..09d65926 100644
+index 36543eb5..f7bff066 100644
 --- a/doc/manual.xml.head
 +++ b/doc/manual.xml.head
-@@ -5870,6 +5870,7 @@ e.g. replies to your messages: ~&lt;(~P)</entry></row>
+@@ -5835,6 +5835,7 @@ e.g. replies to your messages: ~&lt;(~P)</entry></row>
  <row><entry>~&gt;(<emphasis>PATTERN</emphasis>)</entry><entry>messages
  having an immediate child matching <emphasis>PATTERN</emphasis>,
  e.g. messages you replied to: ~&gt;(~P)</entry></row>
@@ -17,7 +17,7 @@ index 4a587eec..09d65926 100644
  </tgroup>
  </table>
 diff --git a/imap/command.c b/imap/command.c
-index 5ff45499..e5f7b38b 100644
+index 5ca04bf0..cd09303f 100644
 --- a/imap/command.c
 +++ b/imap/command.c
 @@ -76,6 +76,7 @@ static const char * const Capabilities[] = {
@@ -29,10 +29,10 @@ index 5ff45499..e5f7b38b 100644
    NULL
  };
 diff --git a/imap/imap.c b/imap/imap.c
-index c3efb422..c848b801 100644
+index b13dd54d..56b0db0f 100644
 --- a/imap/imap.c
 +++ b/imap/imap.c
-@@ -2133,6 +2133,9 @@ static int do_search (const pattern_t* search, int allpats)
+@@ -2135,6 +2135,9 @@ static int do_search (const pattern_t* search, int allpats)
          if (pat->stringmatch)
            rc++;
          break;
@@ -42,7 +42,7 @@ index c3efb422..c848b801 100644
        default:
          if (pat->child && do_search (pat->child, 1))
            rc++;
-@@ -2148,7 +2151,7 @@ static int do_search (const pattern_t* search, int allpats)
+@@ -2150,7 +2153,7 @@ static int do_search (const pattern_t* search, int allpats)
  /* convert mutt pattern_t to IMAP SEARCH command containing only elements
   * that require full-text search (mutt already has what it needs for most
   * match types, and does a better job (eg server doesn't support regexps). */
@@ -51,7 +51,7 @@ index c3efb422..c848b801 100644
  {
    if (! do_search (pat, 0))
      return 0;
-@@ -2174,7 +2177,7 @@ static int imap_compile_search (const pattern_t* pat, BUFFER* buf)
+@@ -2176,7 +2179,7 @@ static int imap_compile_search (const pattern_t* pat, BUFFER* buf)
              mutt_buffer_addstr (buf, "OR ");
            clauses--;
  
@@ -60,7 +60,7 @@ index c3efb422..c848b801 100644
              return -1;
  
            if (clauses)
-@@ -2225,6 +2228,19 @@ static int imap_compile_search (const pattern_t* pat, BUFFER* buf)
+@@ -2227,6 +2230,19 @@ static int imap_compile_search (const pattern_t* pat, BUFFER* buf)
          imap_quote_string (term, sizeof (term), pat->p.str);
          mutt_buffer_addstr (buf, term);
          break;
@@ -80,7 +80,7 @@ index c3efb422..c848b801 100644
      }
    }
  
-@@ -2245,7 +2261,7 @@ int imap_search (CONTEXT* ctx, const pattern_t* pat)
+@@ -2247,7 +2263,7 @@ int imap_search (CONTEXT* ctx, const pattern_t* pat)
  
    mutt_buffer_init (&buf);
    mutt_buffer_addstr (&buf, "UID SEARCH ");
@@ -90,7 +90,7 @@ index c3efb422..c848b801 100644
      FREE (&buf.data);
      return -1;
 diff --git a/imap/imap_private.h b/imap/imap_private.h
-index b7fb687c..bfc2e232 100644
+index 42078349..7b97b654 100644
 --- a/imap/imap_private.h
 +++ b/imap/imap_private.h
 @@ -123,6 +123,7 @@ enum
@@ -102,10 +102,10 @@ index b7fb687c..bfc2e232 100644
    CAPMAX
  };
 diff --git a/mutt.h b/mutt.h
-index bfa884f4..02872a35 100644
+index 8f45e67f..9b2997eb 100644
 --- a/mutt.h
 +++ b/mutt.h
-@@ -276,6 +276,7 @@ enum
+@@ -275,6 +275,7 @@ enum
    MUTT_XLABEL,
    MUTT_MIMEATTACH,
    MUTT_MIMETYPE,
@@ -114,7 +114,7 @@ index bfa884f4..02872a35 100644
    /* Options for Mailcap lookup */
    MUTT_EDIT,
 diff --git a/pattern.c b/pattern.c
-index 98d3d38f..9a91a06c 100644
+index 6957a7e8..c6a774a7 100644
 --- a/pattern.c
 +++ b/pattern.c
 @@ -279,6 +279,11 @@ Flags[] =
